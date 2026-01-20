@@ -1,9 +1,9 @@
 data "aws_ami" "amazon_linux_2023" {
   most_recent = true
-  owners = ["amazon"]
+  owners      = ["amazon"]
 
   filter {
-    name = "name"
+    name   = "name"
     values = ["al2023-ami-2023.*-x86_64"]
   }
   filter {
@@ -19,12 +19,12 @@ data "aws_vpc" "default" {
 
 data "aws_subnets" "default_subnets" {
   filter {
-    name = "vpc-id"
+    name   = "vpc-id"
     values = [data.aws_vpc.default.id]
   }
 
   filter {
-    name = "availability-zone"
+    name   = "availability-zone"
     values = ["us-east-1a"]
   }
 
@@ -39,13 +39,13 @@ data "aws_route53_zone" "selected" {
 
 
 resource "aws_security_group" "web_app_sg" {
-  vpc_id = data.aws_vpc.default.id
+  vpc_id      = data.aws_vpc.default.id
   description = "Allow web and SSH traffic"
-  name = "web-app-security-group"
+  name        = "web-app-security-group"
 
   tags = {
     Name = "web-app-sg"
-  } 
+  }
 }
 
 resource "aws_vpc_security_group_ingress_rule" "allow_http" {
@@ -97,23 +97,23 @@ resource "aws_route53_record" "main" {
 }
 
 resource "aws_route53_record" "www" {
-  zone_id = data.aws_route53_zone.selected.zone_id
-  name    = "www.${data.aws_route53_zone.selected.name}"
-  type    = "CNAME"
-  ttl     = "300"
-  records = [data.aws_route53_zone.selected.name]
+  zone_id         = data.aws_route53_zone.selected.zone_id
+  name            = "www.${data.aws_route53_zone.selected.name}"
+  type            = "CNAME"
+  ttl             = "300"
+  records         = [data.aws_route53_zone.selected.name]
   allow_overwrite = true
 }
 
 resource "aws_instance" "ec2-web_server" {
-  ami           = data.aws_ami.amazon_linux_2023.id
-  instance_type = var.instance_type
-  key_name      = var.key_name
-  vpc_security_group_ids = [aws_security_group.web_app_sg.id]
+  ami                         = data.aws_ami.amazon_linux_2023.id
+  instance_type               = var.instance_type
+  key_name                    = var.key_name
+  vpc_security_group_ids      = [aws_security_group.web_app_sg.id]
   associate_public_ip_address = true
-  subnet_id = data.aws_subnets.default_subnets.ids[0]
+  subnet_id                   = data.aws_subnets.default_subnets.ids[0]
 
-  user_data = file("../scripts/setup_host.sh")
+  user_data                   = file("../scripts/setup_host.sh")
   user_data_replace_on_change = true
 
   tags = {
