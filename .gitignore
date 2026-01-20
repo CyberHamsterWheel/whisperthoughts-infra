@@ -1,10 +1,11 @@
-# Security: Hide your private IP and secrets
-*.tfvars
-
-# State: Hide your local infrastructure "memory"
+# Terraform internals
+.terraform/
 *.tfstate
 *.tfstate.backup
-
-# Binaries: Hide the heavy Terraform installation files
-.terraform/
+*.tfvars
 .terraform.lock.hcl
+
+# System & Temporary files
+scripts/ec2-user@*
+.DS_Store
+__pycache__/
