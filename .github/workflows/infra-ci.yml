@@ -28,7 +28,7 @@ jobs:
         working-directory: ./terraform
 
       - name: Terraform Validate
-        run: terraform validate -var="my_ip=0.0.0.0/0"
+        run: terraform validate
         working-directory: ./terraform
 
   k8s-lint:
