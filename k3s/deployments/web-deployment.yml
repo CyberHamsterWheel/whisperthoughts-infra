@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: flask-app-container
-          image: mimipower/web-flask:latest
+          image: mimipower/web-flask:ba55d0b023acc33a4f7d3810adca2b5207f88a8b
           ports:
             - containerPort: 80
           env: # create this environment variable to be matched with app.py
