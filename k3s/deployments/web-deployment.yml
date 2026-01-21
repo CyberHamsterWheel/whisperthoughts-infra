@@ -10,15 +10,47 @@ spec:
   template:
     metadata:
       labels:
-        app: web-app
+        app: web-app # match with service selector "app: web-app"
     spec:
+      affinity: # kubelinter requires affinity rule to allocate the pods
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                labelSelector:
+                  matchExpressions:
+                    - key: app
+                      operator: In
+                      values:
+                        - web-app
+                topologyKey: "kubernetes.io/hostname"
+      securityContext: # apply to both pods and containers
+        runAsNonRoot: true
+        runAsUser: 1000
       containers:
         - name: flask-app-container
           image: mimipower/web-flask:ba55d0b023acc33a4f7d3810adca2b5207f88a8b
           ports:
             - containerPort: 80
+          resources: # kubelinter requires defining the pods' guaranteed space
+            requests:
+              cpu: "100m" # reserved CPU
+              memory: "128Mi" # reserved RAM
+            limits:
+              cpu: "300m" # max allowed CPU
+              memory: "256Mi" # maxi allowed RAM
+          securityContext:
+            readOnlyRootFilesystem: true
+            allowPrivilegeEscalation: false
+          volumeMounts: # after restricting read only root file system, needs a mounted volume for the flask app
+            - name: tmp-volume
+              mountPath: /tmp
+      volumes: #volume definition
+        - name: tmp-volume
+          emptyDir:
+            medium: Memory # temp writable folder in RAM for flask caching
           env: # create this environment variable to be matched with app.py
             - name: MY_POD_NAME # label flask looks for
               valueFrom:
                 fieldRef:
-                  fieldPath: metadata.name
+                  fieldPath: metadata.name # referring back to itself
