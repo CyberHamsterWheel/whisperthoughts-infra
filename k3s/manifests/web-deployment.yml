@@ -29,7 +29,7 @@ spec:
         runAsUser: 1000
       containers:
         - name: flask-app-container
-          image: mimipower/web-flask:ba55d0b023acc33a4f7d3810adca2b5207f88a8b
+          image: mimipower/web-flask:1a2726e46bfb74e60a9a538b69a59709db96eee3
           ports:
             - containerPort: 80
           resources: # kubelinter requires defining the pods' guaranteed space
