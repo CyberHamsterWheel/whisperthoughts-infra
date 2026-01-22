@@ -38,19 +38,20 @@ spec:
               memory: "128Mi" # reserved RAM
             limits:
               cpu: "300m" # max allowed CPU
-              memory: "256Mi" # maxi allowed RAM
+              memory: "256Mi" # max allowed RAM
           securityContext:
             readOnlyRootFilesystem: true
             allowPrivilegeEscalation: false
           volumeMounts: # after restricting read only root file system, needs a mounted volume for the flask app
             - name: tmp-volume
               mountPath: /tmp
-      volumes: #volume definition
-        - name: tmp-volume
-          emptyDir:
-            medium: Memory # temp writable folder in RAM for flask caching
           env: # create this environment variable to be matched with app.py
             - name: MY_POD_NAME # label flask looks for
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.name # referring back to itself
+      volumes: #volume definition
+        - name: tmp-volume
+          emptyDir:
+            medium: Memory # temp writable folder in RAM for flask caching
+
