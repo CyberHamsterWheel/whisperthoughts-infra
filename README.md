@@ -1,3 +1,5 @@
+![diagram-image](diagram.png)
+
 # Scalable Web Infrastructure with K3s & Terraform
 A production-ready infrastructure project deploying a containerized Flask application on AWS. This repository manages the "Ops" side of a hybrid CI/CD workflow, utilizing K3s for orchestration and Traefik for automated SSL termination. The frontend repo remains private.
 
