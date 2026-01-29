@@ -19,13 +19,13 @@ A production-ready infrastructure project deploying a containerized Flask applic
 │   ├── provider.tf     # AWS Provider configuration  
 │   └── outputs.tf      # Public IP  
 ├── k3s/  
-│   └── manifests/      # K8s Resources  
+│   └── manifests/      # K3s Resources  
 │       ├── web-ingress.yml       # Traefik routing & SSL SAN config  
 │       ├── web-deployment.yml    # Flask app with 2 replicas  
 │       ├── web-service.yml       # Internal Load Balancer  
 │       ├── traefik-redirect.yml  # HTTP to HTTPS logic  
 │       ├── staging-issuer.yml    # Let's Encrypt Staging Issuer  
-│       └── pro-issuer.yml        # Let's Encrypt Prod Issuer    
+│       └── prod-issuer.yml        # Let's Encrypt Prod Issuer    
 ├── scripts/  
 │   └── setup_host.sh   # Bash script for initial K3s/Docker server prep  
 └── .github/workflows/  
@@ -48,7 +48,7 @@ This project uses a split-responsibility model to balance automation with cost-e
 
 ## :hammer_and_wrench: Key Configurations
 ### Dynamic Load Balancing Visibility  
-The Flask application utilizes the Kubernetes **Downward API** to display the specific Pod ID in the browser. This provides a visual confirmation of Traefik's RoundRobin load balancing between the 2 replicas.
+The Flask application utilizes the Kubernetes **Downward API** to display the specific Pod ID in the browser. This provides a visual confirmation of Traefik's load balancing between the 2 replicas.
 ```
 pod_name = os.getenv('MY_POD_NAME', 'Local-Machine')
 ```
@@ -64,7 +64,7 @@ tls:
 ```
 
 ## :package: Prerequisites
-* **Terraform** (v1.14.3)  
+* **Terraform** (v1.14.3) for IaC.
 * **AWS CLI** configured with appropriate IAM permissions.  
 * **kubectl** for remote cluster management.  
 * **K3s** installed on the target EC2 instance.
@@ -81,10 +81,9 @@ tls:
 - **Cross-Repository Sync:**
   - Automated the "hand-off" between the private App repo and public Infra repo to avoid manual image tag updates.
   - Used a **GitHub PAT** and `sed` within a GitHub Actions workflow to programmatically inject the new image SHA into web-deployment.yml.
-  - Achieved a seamless CI/CD flow while maintaining total isolation between private application logic and public infrastructure code.
+  - Achieved a hybrid CI/CD flow while maintaining total isolation between private application logic and public infrastructure code.
 - **Resource & Cost Optimization:**
   - Attempted an initial deployment on a **t2.micro** (1GB RAM) but identified that the cumulative overhead of the K3s control plane and the **Metrics Server** led to instance instability.
   - Optimized the cluster by disabling non-essential services like **Klipper (servicelb)** and **local storage** to reduce the memory footprint.
-  - Migrated to a t3.small (2GB RAM) to provide the necessary headroom for stable metrics scrapingand consistent performance of the Traefik Ingress controller.
-
+  - Migrated to a t3.small (2GB RAM) to provide the necessary headroom for stable metrics scraping and consistent performance of the Traefik Ingress controller.
 - **Security Resilience:** Shifted from "Default Security Groups" to Custom Terraform-managed Security Groups to ensure ingress rules (80, 443, 22, 6443) are version-controlled and reproducible.  
