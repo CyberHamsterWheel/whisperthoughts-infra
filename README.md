@@ -4,7 +4,7 @@
 A production-ready infrastructure project deploying a containerized Flask application on AWS. This repository manages the "Ops" side of a hybrid CI/CD workflow, utilizing K3s for orchestration and Traefik for automated SSL termination. The frontend repo remains private.
 
 :link: **Link to Full Article:** [Read the technical deep-dive on how i built this project.](https://medium.com/@hannahleung.work/architecting-a-scalable-web-app-with-aws-docker-k3s-terraform-and-hybrid-ci-cd-c92201cb2de6)  
-:link: **Link to Live Demo:** [whisperthoughts.com](whisperthoughts.com)  
+:link: **Link to Live Demo:** [whisperthoughts.com](www.whisperthoughts.com)  
 
 ## :rocket: Architecture Highlights
 - **Infrastructure:** Terraform-managed AWS EC2, Route53, and Custom Security Groups.  
